@@ -1,0 +1,17 @@
+.ListItem {
+    flex-Grow: 1;
+    max-width: 725;
+    margin: 10px 0px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.ListItemIcon{
+    margin: 10px;
+    padding-left: 10px;
+    align-content: flex-start; 
+}
