@@ -4,12 +4,16 @@ import './index.css';
 import App from './App';
 import {BrowserRouter} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
+import {GlobalContextProvider} from './context/Provider'
+
 
 ReactDOM.render(
   <React.StrictMode>
+    <GlobalContextProvider>
     <BrowserRouter>
     <App />
     </BrowserRouter>
+    </GlobalContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

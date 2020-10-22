@@ -2,7 +2,7 @@ import {useState,useEffect} from 'react'
 
 export default httpClient => {
 
-    const  [DataRequstHttp,setDataRequstHttp] = useState({
+    const [DataRequstHttp,setDataRequstHttp] = useState({
         error : null ,
         open : false ,
         })
@@ -23,7 +23,7 @@ export default httpClient => {
                     httpClient.interceptors.response.eject(resInterceptor);
                 }
 
-    },[reqInterceptor,resInterceptor])
+    },[reqInterceptor,resInterceptor, httpClient.interceptors.request,httpClient.interceptors.response])
 
    const errorConfirmedHandler =() =>{
          setDataRequstHttp({error : null ,open : false ,})

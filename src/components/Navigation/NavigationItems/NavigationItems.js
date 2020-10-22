@@ -2,7 +2,7 @@ import React from 'react';
 import classes from './NavigationItems.module.css';
 import NavigationItem from './NavigationItem/NavigationItem';
 import * as routeConst from '../../../Shared/Constants/constantRouter';
-const navigationItems = props => {
+const navigationItems = () => {
     return (
             <ul className= {classes.NavigationItems}> 
                 <NavigationItem Link={routeConst.ROOT_PATH} exact >Add To Do</NavigationItem>

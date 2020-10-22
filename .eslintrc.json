@@ -15,12 +15,13 @@
             "jsx": true ,
             "js" : true
         },
-        "ecmaVersion": 12,
+        "ecmaVersion": 2020,
         "sourceType": "module"
     },
     "plugins": [
         "react"
     ],
     "rules": {
+            "react/prop-types":"off"
     }
 }

@@ -1,0 +1,27 @@
+.ChartTodo {
+    width: 100%;
+    margin:10px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.Paper {  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+}
+.Text {
+    font-size: 30;
+    color: #8884d8;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.Loading{
+
+    margin: 50px;
+
+}

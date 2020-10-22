@@ -1,18 +1,21 @@
-import React, {useEffect, useState } from 'react' ;
+import React, {useEffect, useState ,useContext } from 'react' ;
 import {TextField  , Button , List} from '@material-ui/core'
-
+import {Redirect} from 'react-router-dom'
 
 import classes from './Todo.module.css';
 import axios from '../../axios-ListData';
 import ListTodo from './ListTodo/ListTodo'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import {updateObject} from '../../Shared/utility'
+import {GlobalContext} from '../../context/Provider';
+import * as actiontype from '../../context/actions/actionTypes';
+import * as routsPath from '../../Shared/Constants/constantRouter';
 
 const Todo = props =>  {
 
-   const [todoList , setTodoList] = useState([]);
-   const [error,setError] = useState(false) ; 
-   const [value , setValue] = useState('');
+   const {todoState,todoDispatch} = useContext(GlobalContext);
+    // const [todoList , setTodoList] = useState([]);
+    const [error,setError] = useState(false) ; 
+    const [value , setValue] = useState('');
    
     useEffect(() => {
       axios.get('/ListTodo.json')
@@ -20,11 +23,17 @@ const Todo = props =>  {
         let todoData = Object.keys(response.data).map(item => {
           return {...response.data[item]  ,id : item}  })
           .filter(item => item.Date === new Date().toDateString())
-          setTodoList(todoData)
+          todoDispatch({
+            type : actiontype.FETCH_TODO_SUCCESS ,
+            payload : todoData,
+          })
       }).catch(err => {
-         //message error will handle later.
+         todoDispatch({
+           type : actiontype.MESSAGE_TODO_FAILER,
+           payload : err
+         })
       })
-    },[])
+    },[todoDispatch])
      
     const handleChange = (event) => {
       setError(false);
@@ -42,12 +51,20 @@ const Todo = props =>  {
         }
         axios.post("/ListTodo.json" , todoData)
             .then(response => {
-              const updateData= updateObject(todoData,{id:response.data.name});
-              setTodoList(todoList.concat(updateData));
+              todoDispatch({
+                type : actiontype.ADD_TODO_SUCCESS ,
+                payload : {
+                  id : response.data.name ,
+                  todoData: todoData,
+                }
+              })
               setValue('')
               setError(false)
             }).catch(err => {
-              console.log(err)
+              todoDispatch({
+                type : actiontype.MESSAGE_TODO_FAILER ,
+                payload : err
+              })
             })
       }
     }
@@ -55,9 +72,15 @@ const Todo = props =>  {
     const onRemoveTodo = (index) => {
       axios.delete(`/ListTodo/${index}.json`)
         .then(res => {
-            setTodoList(todoList.filter(item => index !== item.id));
+            todoDispatch({
+              type : actiontype.REMOVE_TODO_SUCCESS,
+              payload : index
+            })
         }).catch(err=>{
-           // console.log(err)
+          todoDispatch({
+            type : actiontype.MESSAGE_TODO_FAILER ,
+            payload : err
+          })
         })
     }
 
@@ -69,20 +92,31 @@ const Todo = props =>  {
       }
           axios.put(`/ListTodo/${item.id}.json`,updateChecked)
           .then(res => {
-            const updateList = todoList.map(element => (element.id === item.id ? {...res.data,element} : element ))
-            setTodoList(updateList)
+            todoDispatch({
+              type : actiontype.CHECKED_TODO_SUCCESS,
+              payload : {
+                itemData : res.data ,
+                index : item.id
+              }
+            })
           }).catch(err => {
-           //
+            todoDispatch({
+              type : actiontype.MESSAGE_TODO_FAILER ,
+              payload : err
+            })
           })
     }
-
+      let redirectWhenFails= null
+      if(todoState.error) {
+        redirectWhenFails= <Redirect to = {routsPath.ROOT_PATH}  />
+      }
       let todoListData = (
           <p style={{alignItems:'center',color:'#6200EE'}}>Let's Add SOME TO-DO</p>
       )
-      if(todoList != null) {
+      if(todoState.todoList != null) {
         todoListData = (
             <List className={classes.List}>
-                        {todoList.map((itemTodo) => (
+                        {todoState.todoList.map((itemTodo) => (
 
                               <ListTodo key ={itemTodo.id} 
                                         checked={itemTodo.checked}
@@ -95,6 +129,7 @@ const Todo = props =>  {
       }
       return(  
           <div className={classes.Todo}>
+                {redirectWhenFails}
                 <form className={classes.form}  noValidate autoComplete="off"  onSubmit={(event) => onAddTodoHandler(event,value)}>
                 <TextField 
                         className={classes.TextField}

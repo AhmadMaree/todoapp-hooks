@@ -3,7 +3,7 @@ import Modal from '../../components/UI/Modal/Modal';
 import useHttpClient from '../../custom-hooks/httpErrorHandler';
 
 const withErrorHandler = (WrappedComponent , axios) => {
-
+    
     return props => {
 
         const [DataRequst , errorConfirmedHandler] = useHttpClient(axios);
@@ -20,5 +20,7 @@ const withErrorHandler = (WrappedComponent , axios) => {
                 </React.Fragment>
             )
         }
+        
 }
+
 export default withErrorHandler;
