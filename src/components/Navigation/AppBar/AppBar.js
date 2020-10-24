@@ -14,7 +14,7 @@ const appBar = (props) => {
                    TodoApp
             </Typography>
             <nav className ={classes.DesktopOnly}>
-                    <NavigationItems  />
+                    <NavigationItems  isAuth={props.isAuthenticate}/>
             </nav>
         </Toolbar>
        </AppBar>

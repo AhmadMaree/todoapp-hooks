@@ -18,7 +18,7 @@ const sideDrawer = (props) => {
                         <div className={classes.SideDrawer}>
                             <List>
                              <ListItem button >
-                                 <ListItemText primary={<NavigationItems/>}/>
+                                 <ListItemText primary={<NavigationItems isAuth ={props.isAuthenticate}/>}/>
                              </ListItem> 
                             </List>
                         </div>

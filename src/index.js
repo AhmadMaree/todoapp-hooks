@@ -4,16 +4,22 @@ import './index.css';
 import App from './App';
 import {BrowserRouter} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
-import {GlobalContextProvider} from './context/Provider'
+import {TodoContextProvider} from './context/Providers/todoProvider';
+import {ChartContextProvider} from './context/Providers/chartProvider';
+import {AuthContextProvider} from './context/Providers/AuthProvider';
 
 
 ReactDOM.render(
   <React.StrictMode>
-    <GlobalContextProvider>
+    <TodoContextProvider>
+      <ChartContextProvider>
+        <AuthContextProvider>
     <BrowserRouter>
     <App />
     </BrowserRouter>
-    </GlobalContextProvider>
+        </AuthContextProvider>
+     </ChartContextProvider>
+    </TodoContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

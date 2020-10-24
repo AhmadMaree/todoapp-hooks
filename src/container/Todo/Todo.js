@@ -6,34 +6,36 @@ import classes from './Todo.module.css';
 import axios from '../../axios-ListData';
 import ListTodo from './ListTodo/ListTodo'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import {GlobalContext} from '../../context/Provider';
+import {todoContext} from '../../context/Providers/todoProvider';
+import {authContext} from '../../context/Providers/AuthProvider';
 import * as actiontype from '../../context/actions/actionTypes';
 import * as routsPath from '../../Shared/Constants/constantRouter';
 
 const Todo = props =>  {
 
-   const {todoState,todoDispatch} = useContext(GlobalContext);
-    // const [todoList , setTodoList] = useState([]);
+    const [state,dispatch] = useContext(todoContext);
+    const [stateAuth] = useContext(authContext)
     const [error,setError] = useState(false) ; 
     const [value , setValue] = useState('');
    
     useEffect(() => {
-      axios.get('/ListTodo.json')
+      const quaryParams ='?auth='+stateAuth.idToken+'&orderBy="userId"&equalTo="' + stateAuth.userId + '"';
+      axios.get('/ListTodo.json'+quaryParams)
       .then(response => {    
         let todoData = Object.keys(response.data).map(item => {
           return {...response.data[item]  ,id : item}  })
           .filter(item => item.Date === new Date().toDateString())
-          todoDispatch({
+          dispatch({
             type : actiontype.FETCH_TODO_SUCCESS ,
             payload : todoData,
           })
       }).catch(err => {
-         todoDispatch({
+        dispatch({
            type : actiontype.MESSAGE_TODO_FAILER,
            payload : err
          })
       })
-    },[todoDispatch])
+    },[dispatch,stateAuth.idToken,stateAuth.userId])
      
     const handleChange = (event) => {
       setError(false);
@@ -48,10 +50,11 @@ const Todo = props =>  {
           name : inputValue.trim() ,
           Date : new Date().toDateString(),
           checked : false ,
+          userId : stateAuth.userId
         }
-        axios.post("/ListTodo.json" , todoData)
+        axios.post("/ListTodo.json?auth="+stateAuth.idToken , todoData)
             .then(response => {
-              todoDispatch({
+              dispatch({
                 type : actiontype.ADD_TODO_SUCCESS ,
                 payload : {
                   id : response.data.name ,
@@ -61,7 +64,7 @@ const Todo = props =>  {
               setValue('')
               setError(false)
             }).catch(err => {
-              todoDispatch({
+              dispatch({
                 type : actiontype.MESSAGE_TODO_FAILER ,
                 payload : err
               })
@@ -70,14 +73,14 @@ const Todo = props =>  {
     }
 
     const onRemoveTodo = (index) => {
-      axios.delete(`/ListTodo/${index}.json`)
+      axios.delete(`/ListTodo/${index}.json?auth=`+stateAuth.idToken)
         .then(res => {
-            todoDispatch({
+          dispatch({
               type : actiontype.REMOVE_TODO_SUCCESS,
               payload : index
             })
         }).catch(err=>{
-          todoDispatch({
+          dispatch({
             type : actiontype.MESSAGE_TODO_FAILER ,
             payload : err
           })
@@ -90,9 +93,9 @@ const Todo = props =>  {
         ...item,
         checked : !item.checked
       }
-          axios.put(`/ListTodo/${item.id}.json`,updateChecked)
+          axios.put(`/ListTodo/${item.id}.json?auth=`+stateAuth.idToken,updateChecked)
           .then(res => {
-            todoDispatch({
+            dispatch({
               type : actiontype.CHECKED_TODO_SUCCESS,
               payload : {
                 itemData : res.data ,
@@ -100,23 +103,23 @@ const Todo = props =>  {
               }
             })
           }).catch(err => {
-            todoDispatch({
+            dispatch({
               type : actiontype.MESSAGE_TODO_FAILER ,
               payload : err
             })
           })
     }
       let redirectWhenFails= null
-      if(todoState.error) {
+      if(state.error) {
         redirectWhenFails= <Redirect to = {routsPath.ROOT_PATH}  />
       }
       let todoListData = (
           <p style={{alignItems:'center',color:'#6200EE'}}>Let's Add SOME TO-DO</p>
       )
-      if(todoState.todoList != null) {
+      if(state.todoList != null) {
         todoListData = (
             <List className={classes.List}>
-                        {todoState.todoList.map((itemTodo) => (
+                        {state.todoList.map((itemTodo) => (
 
                               <ListTodo key ={itemTodo.id} 
                                         checked={itemTodo.checked}
