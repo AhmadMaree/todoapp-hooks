@@ -52,7 +52,7 @@ const Todo = props =>  {
           checked : false ,
           userId : stateAuth.userId
         }
-        axios.post("/ListTodo.json?auth="+stateAuth.idToken , todoData)
+        axios.post("/ListTodo.json" , todoData)
             .then(response => {
               dispatch({
                 type : actiontype.ADD_TODO_SUCCESS ,
@@ -73,7 +73,7 @@ const Todo = props =>  {
     }
 
     const onRemoveTodo = (index) => {
-      axios.delete(`/ListTodo/${index}.json?auth=`+stateAuth.idToken)
+      axios.delete(`/ListTodo/${index}.json`)
         .then(res => {
           dispatch({
               type : actiontype.REMOVE_TODO_SUCCESS,
@@ -93,7 +93,7 @@ const Todo = props =>  {
         ...item,
         checked : !item.checked
       }
-          axios.put(`/ListTodo/${item.id}.json?auth=`+stateAuth.idToken,updateChecked)
+          axios.put(`/ListTodo/${item.id}.json`,updateChecked)
           .then(res => {
             dispatch({
               type : actiontype.CHECKED_TODO_SUCCESS,

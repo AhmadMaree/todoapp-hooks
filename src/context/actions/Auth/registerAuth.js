@@ -1,5 +1,5 @@
 import * as actionType from '../actionTypes';
-import axios from '../../../axios-ListData';
+import axios from 'axios';
 
 
 export  const authSucces = (idToken,userId) => (dispatch) => {
@@ -15,7 +15,7 @@ export  const authSucces = (idToken,userId) => (dispatch) => {
 export  const authFail = (error) => (dispatch) => {
     dispatch({
         type : actionType.AUTHENTICATE_FAIL,
-        payload : error
+        payload : error.response.data.error
     })
 }
 export  const authStart = () =>(dispatch) => {
@@ -60,6 +60,6 @@ export default  (email , password , isSignup) => (dispatch) => {
                     authSucces(response.data.idToken , response.data.localId)(dispatch)
                     checkAuth(response.data.expiresIn)(dispatch)
              }).catch(err => {
-                authFail(err.response.data.error)(dispatch)
+                authFail(err)(dispatch)
              })
 }

@@ -2,7 +2,7 @@ import React, {useState,useContext, useEffect} from 'react';
 import classes from './Auth.module.css';
 import { Paper ,Button } from '@material-ui/core';
 import * as Yup from "yup";
-import { Formik } from 'formik';
+import {  useFormik } from 'formik';
 import Form from './Form/Form';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Redirect } from 'react-router-dom';
@@ -27,26 +27,25 @@ const Auth = () => {
     const onSwitchSingHandler = () => {
        setIsSingup(!isSignup);
     }
+    const formik = useFormik({
+        initialValues : {email :'' ,password :''},
+        onSubmit : ({email , password}) =>{
+            onAuth(email,password,isSignup)(dispatch)
+        },
+        validationSchema : Yup.object({
+            email : Yup.string("Enter your Email")
+                    .email("Enter Vaild Email")
+                    .required("Email is Requird"),
+            password: Yup.string("")
+                    .min(8, "Password must contain at least 8 characters")
+                    .required("Enter your password"),
+        }),
+    });
 
 
         let form = ( 
        <Paper elevation={1} className={classes.Paper} >
-          <Formik
-                initialValues= {{email :'' ,password :''}}  
-                onSubmit= {({email , password}) =>{
-                    onAuth(email,password,isSignup)(dispatch)
-                }} 
-                validationSchema ={Yup.object({
-                    email : Yup.string("Enter your Email")
-                            .email("Enter Vaild Email")
-                            .required("Email is Requird"),
-                    password: Yup.string("")
-                            .min(8, "Password must contain at least 8 characters")
-                            .required("Enter your password"),
-                })}
-            >
-                            {props => <Form {...props}/>}
-            </Formik>
+               <Form {...formik}/>
             <Button  onClick ={onSwitchSingHandler}>
                       Switch to {isSignup ? "SignIn" : 'SignUp'}
             </Button>

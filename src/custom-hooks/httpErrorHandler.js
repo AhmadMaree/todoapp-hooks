@@ -1,7 +1,5 @@
 import {useState,useEffect} from 'react'
-
 export default httpClient => {
-
     const [DataRequstHttp,setDataRequstHttp] = useState({
         error : null ,
         open : false ,
